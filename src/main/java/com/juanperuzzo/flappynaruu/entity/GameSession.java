@@ -26,17 +26,10 @@ public class GameSession {
     public GameSession() {
     }
 
-    public GameSession(String nickname) {
+    public GameSession(String nickname, Integer score) {
         this.nickname = nickname;
         this.score = 0;
         this.createdAt = Instant.now();
-    }
-
-    public void updateScore(int newScore) {
-        if (newScore < this.score) {
-            throw new IllegalArgumentException("Score cannot decrease");
-        }
-        this.score = newScore;
     }
 
     public Long getId() {

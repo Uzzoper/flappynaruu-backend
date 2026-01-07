@@ -4,6 +4,9 @@ import com.juanperuzzo.flappynaruu.entity.GameSession;
 import com.juanperuzzo.flappynaruu.repository.GameSessionRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
+import java.util.List;
+
 @Service
 public class GameSessionService {
 
@@ -13,12 +16,29 @@ public class GameSessionService {
         this.repository = repository;
     }
 
-    public GameSession createGameSession (String nickname) {
+    public boolean registerScoreIfHighscore (String nickname, Integer score) {
         if (nickname == null || nickname.isBlank()) {
-            throw new IllegalArgumentException("Nickname cannot be empty");
+            throw new IllegalArgumentException("Nickname cannot be empty.");
         }
 
-        GameSession gameSession = new GameSession(nickname);
-        return repository.save(gameSession);
+        if (score == null || score <= 0) {
+            throw new IllegalArgumentException("Score must be greater than zero.");
+        }
+
+        List<GameSession> top5 = repository.findTop5ByOrderByScoreDescCreatedAtAsc();
+
+        if (top5.size() < 5) {
+            repository.save(new GameSession(nickname, score));
+            return true;
+        }
+
+        GameSession lowest = top5.get(4);
+
+        if (score > lowest.getScore()) {
+            repository.delete(lowest);
+            repository.save(new GameSession(nickname, score));
+            return true;
+        }
+        return false;
     }
 }
