@@ -1,6 +1,8 @@
 package com.juanperuzzo.flappynaruu.service;
 
 import com.juanperuzzo.flappynaruu.entity.GameSession;
+import com.juanperuzzo.flappynaruu.exception.InvalidNicknameException;
+import com.juanperuzzo.flappynaruu.exception.InvalidScoreException;
 import com.juanperuzzo.flappynaruu.repository.GameSessionRepository;
 import org.springframework.stereotype.Service;
 
@@ -17,11 +19,11 @@ public class GameSessionService {
 
     public boolean registerScoreIfHighscore (String nickname, Integer score) {
         if (nickname == null || nickname.isBlank()) {
-            throw new IllegalArgumentException("Nickname cannot be empty.");
+            throw new InvalidNicknameException("Nickname cannot be empty.");
         }
 
         if (score == null || score <= 0) {
-            throw new IllegalArgumentException("Score must be greater than zero.");
+            throw new InvalidScoreException("Score must be greater than zero.");
         }
 
         List<GameSession> top5 = repository.findTop5ByOrderByScoreDescCreatedAtAsc();
