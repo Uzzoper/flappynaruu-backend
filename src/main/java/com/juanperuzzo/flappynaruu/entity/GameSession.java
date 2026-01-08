@@ -28,7 +28,7 @@ public class GameSession {
 
     public GameSession(String nickname, Integer score) {
         this.nickname = nickname;
-        this.score = 0;
+        this.score = score;
         this.createdAt = Instant.now();
     }
 

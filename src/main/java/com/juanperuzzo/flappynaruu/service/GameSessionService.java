@@ -4,7 +4,6 @@ import com.juanperuzzo.flappynaruu.entity.GameSession;
 import com.juanperuzzo.flappynaruu.repository.GameSessionRepository;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
 import java.util.List;
 
 @Service
@@ -40,5 +39,9 @@ public class GameSessionService {
             return true;
         }
         return false;
+    }
+
+    public List<GameSession> getTop5() {
+        return repository.findTop5ByOrderByScoreDescCreatedAtAsc();
     }
 }
