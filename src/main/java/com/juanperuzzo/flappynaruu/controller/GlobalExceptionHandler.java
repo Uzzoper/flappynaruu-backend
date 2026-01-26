@@ -1,7 +1,5 @@
 package com.juanperuzzo.flappynaruu.controller;
 
-import com.juanperuzzo.flappynaruu.exception.InvalidNicknameException;
-import com.juanperuzzo.flappynaruu.exception.InvalidScoreException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -17,26 +15,28 @@ public class GlobalExceptionHandler {
         return Map.of(
                 "timestamp", Instant.now(),
                 "error", code,
-                "message", message
-        );
+                "message", message);
     }
 
-    @ExceptionHandler(InvalidNicknameException.class)
-    public ResponseEntity<Map<String, Object>> handleInvalidNickname(InvalidNicknameException ex) {
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(error("INVALID_NICKNAME", ex.getMessage()));
-    }
+    @ExceptionHandler(org.springframework.web.bind.MethodArgumentNotValidException.class)
+    public ResponseEntity<Map<String, Object>> handleValidationErrors(
+            org.springframework.web.bind.MethodArgumentNotValidException ex) {
 
-    @ExceptionHandler(InvalidScoreException.class)
-    public ResponseEntity<Map<String, Object>> handleInvalidScore(InvalidScoreException ex) {
+        String detail = ex.getBindingResult().getFieldErrors().stream()
+                .map(err -> err.getField() + ": " + err.getDefaultMessage())
+                .reduce((a, b) -> a + "; " + b)
+                .orElse("Validation failed");
+
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
-                .body(error("INVALID_SCORE", ex.getMessage()));
+                .body(error("VALIDATION_ERROR", detail));
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, Object>> handleGenericError(Exception ex) {
+
+        String message = "An unexpected error ocurred";
+
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(error("INTERNAL_ERROR", ex.getMessage()));
