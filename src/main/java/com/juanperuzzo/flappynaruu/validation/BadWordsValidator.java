@@ -59,6 +59,7 @@ public class BadWordsValidator implements ConstraintValidator<NoBadWords, String
     private String normalize(String text) {
         return Normalizer.normalize(text.toLowerCase(), Normalizer.Form.NFD)
                 .replaceAll("[^\\p{ASCII}]", "")
+                .replaceAll("(.)\\1+", "$1")
                 .replaceAll("\\s+", "")
                 .replaceAll("[0@]", "a")
                 .replaceAll("[3]", "e")
