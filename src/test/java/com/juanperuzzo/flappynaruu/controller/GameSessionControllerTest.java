@@ -54,8 +54,8 @@ public class GameSessionControllerTest {
         SaveScoreRequest request = new SaveScoreRequest("merda", 10);
 
         mockMvc.perform(post("/leaderboard")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request))).andExpect(status().isBadRequest())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request))).andExpect(status().isBadRequest())
                 .andExpect(result -> {
                     String response = result.getResponse().getContentAsString();
                     if (!response.contains("Nickname não pode conter palavras inapropriadas")) {

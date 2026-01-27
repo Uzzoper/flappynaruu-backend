@@ -13,7 +13,9 @@ import java.lang.annotation.Target;
 @Constraint(validatedBy = BadWordsValidator.class)
 public @interface NoBadWords {
 
-        String message() default "Nickname cannot contain bad words.";
-        Class<?>[] groups() default {};
-        Class<? extends Payload>[] payload() default {};
+    String message() default "Nickname cannot contain bad words.";
+
+    Class<?>[] groups() default {};
+
+    Class<? extends Payload>[] payload() default {};
 }
