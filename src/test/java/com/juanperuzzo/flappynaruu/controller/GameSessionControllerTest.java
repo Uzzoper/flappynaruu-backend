@@ -34,8 +34,7 @@ public class GameSessionControllerTest {
 
         mockMvc.perform(post("/leaderboard")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request))
-        ).andExpect(status().isCreated());
+                .content(objectMapper.writeValueAsString(request))).andExpect(status().isCreated());
     }
 
     @Test
@@ -46,7 +45,22 @@ public class GameSessionControllerTest {
 
         mockMvc.perform(post("/leaderboard")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request))
-        ).andExpect(status().isNoContent());
+                .content(objectMapper.writeValueAsString(request))).andExpect(status().isNoContent());
+    }
+
+    @Test
+    public void shouldReturn400WhenNicknameHasBadWords() throws Exception {
+        // "merda" is in bad-words.txt
+        SaveScoreRequest request = new SaveScoreRequest("merda", 10);
+
+        mockMvc.perform(post("/leaderboard")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request))).andExpect(status().isBadRequest())
+                .andExpect(result -> {
+                    String response = result.getResponse().getContentAsString();
+                    if (!response.contains("Nickname não pode conter palavras inapropriadas")) {
+                        throw new AssertionError("Response does not contain expected message: " + response);
+                    }
+                });
     }
 }

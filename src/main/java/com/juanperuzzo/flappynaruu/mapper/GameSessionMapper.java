@@ -5,7 +5,7 @@ import com.juanperuzzo.flappynaruu.entity.GameSession;
 
 public class GameSessionMapper {
 
-    public GameSessionMapper() {
+    private GameSessionMapper() {
     }
 
     public static ScoreResponse toScoreResponse(GameSession session) {
