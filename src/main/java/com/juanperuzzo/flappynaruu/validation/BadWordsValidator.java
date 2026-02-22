@@ -3,14 +3,14 @@ package com.juanperuzzo.flappynaruu.validation;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
 import java.text.Normalizer;
+import java.util.Arrays;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 public class BadWordsValidator implements ConstraintValidator<NoBadWords, String> {
+
+    private static final String BAD_WORDS_ENV = "BAD_WORDS";
 
     private Set<String> badWords;
 
@@ -42,18 +42,15 @@ public class BadWordsValidator implements ConstraintValidator<NoBadWords, String
     }
 
     private Set<String> loadBadWords() {
-        try (BufferedReader reader = new BufferedReader(
-                new InputStreamReader(
-                        getClass().getClassLoader().getResourceAsStream("bad-words.txt"),
-                        StandardCharsets.UTF_8))) {
-            return reader.lines()
-                    .map(String::trim)
-                    .filter(line -> !line.isEmpty() && !line.startsWith("#"))
-                    .map(this::normalize)
-                    .collect(Collectors.toUnmodifiableSet());
-        } catch (Exception e) {
-            throw new IllegalStateException("Error loading bad-words.txt", e);
+        String envBadWords = System.getenv(BAD_WORDS_ENV);
+        if (envBadWords == null || envBadWords.isBlank()) {
+            return Set.of();
         }
+        return Arrays.stream(envBadWords.split(","))
+                .map(String::trim)
+                .filter(word -> !word.isEmpty())
+                .map(this::normalize)
+                .collect(Collectors.toUnmodifiableSet());
     }
 
     private String normalize(String text) {
