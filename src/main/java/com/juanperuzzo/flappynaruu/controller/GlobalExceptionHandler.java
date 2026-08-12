@@ -5,6 +5,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import com.juanperuzzo.flappynaruu.security.InvalidScoreSignatureException;
+
 import java.time.Instant;
 import java.util.Map;
 
@@ -37,5 +39,12 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(error("INTERNAL_ERROR", ex.getMessage()));
+    }
+
+    @ExceptionHandler(InvalidScoreSignatureException.class)
+    public ResponseEntity<Map<String, Object>> handleInvalidSignature(InvalidScoreSignatureException ex) {
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body(error("INVALID_SIGNATURE", ex.getMessage()));
     }
 }
