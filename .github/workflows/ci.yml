@@ -10,7 +10,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      BAD_WORDS: ${{ secrets.BAD_WORDS }}
+      BAD_WORDS: ${{ secrets.BAD_WORDS || vars.BAD_WORDS }}
     steps:
       - uses: actions/checkout@v4
 
